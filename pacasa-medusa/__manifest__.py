@@ -1,13 +1,12 @@
 # -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 {
-    'name' : 'Sale Order Automation',
+    'name' : 'Ajuste PACASA',
     'version' : '2.3',
-    'author':'Craftsync Technologies',
+    'author':'s',
     'category': 'Sales',
-    'maintainer': 'Craftsync Technologies',
-    'summary': """Enable auto sale workflow with sale order confirmation. Include operations like Auto Create Invoice, Auto Validate Invoice and Auto Transfer Delivery Order.""",
-    'description': """
+    'maintainer': '',
+    'summary': """ """
 
         You can directly create invoice and set done to delivery order by single click
 
