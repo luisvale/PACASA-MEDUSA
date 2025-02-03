@@ -158,7 +158,8 @@ class AccountInvoice(models.Model):
                     for picking in order.picking_ids:
                         if picking.state not in ['done', 'cancel']:
                             picking.sudo().action_confirm()
-                            picking.sudo().action_assign()
+                            picking.sudo().do_unreserve()  # NUEVO
+                            picking.sudo().action_assign()  # NUEVO
 
                             partial_moves = []
                             pending_moves = []
@@ -174,6 +175,12 @@ class AccountInvoice(models.Model):
                                 else:
                                     move.quantity_done = move.product_uom_qty
 
+                                # LOG NUEVO
+                                _logger.info(
+                                    "Movimiento antes de validar: Producto: %s | Cantidad requerida: %s | Cantidad reservada: %s | Cantidad completada: %s",
+                                    move.product_id.name, move.product_uom_qty, move.reserved_availability, move.quantity_done
+                                )
+
                                 if move.quantity_done < move.product_uom_qty:
                                     pending_moves.append({
                                         'product': move.product_id.name,
@@ -181,6 +188,9 @@ class AccountInvoice(models.Model):
                                     })
                             
                             if picking.state != 'done':
+                                if any(move.quantity_done < move.product_uom_qty for move in picking.move_ids_without_package):
+                                    _logger.warning("El picking %s tiene movimientos pendientes. No se completará la validación.", picking.name)
+
                                 picking.sudo().button_validate()
 
                             if partial_moves or pending_moves:
